@@ -44,9 +44,9 @@ if __name__ == "__main__":
 
     matplotlib.rcParams.update({'font.size': 18})
     fig, axs = plt.subplots(1, 2, figsize=(10, 6))
-    fig.supylabel("Radius [km]")
-    axs[0].plot(innerDensity, np.array(feasibleRadius) / 1e3, label = "inner")
-    axs[0].plot(outerDensity, np.array(feasibleRadius) / 1e3, label = "outer")
+    fig.supylabel("Layer Boundary Radius [km]")
+    axs[0].plot(innerDensity, np.array(feasibleRadius) / 1e3, label = r"$\rho_{inner}$")
+    axs[0].plot(outerDensity, np.array(feasibleRadius) / 1e3, label = r"$\rho_{outer}$")
     axs[0].set_xlabel("Density [kg/m$^{3}$]")
     axs[0].legend()
     axs[1].plot(Pmax, np.array(feasibleRadius) / 1e3)
