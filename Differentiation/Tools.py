@@ -1,76 +1,50 @@
 """
 This file contains some code that is used multiple times, to avoid duplicate code.
 """
+import math
+import numpy as np
+import scipy.linalg
 
-def profileCalculator(profile, dr):
-    # calculates mass, gravity and pressure for a density profile
-    # profile is a
+# constants
+G = 6.67430e-11
+R = 470e3  # [m], park 2016
+M = 62.62736e9 / G  # [kg], konopliv 2018
+I = 0.37 * M * R ** 2  #[kg*m2] park, 2016
 
-    # set up values of r at which variables will be calculated
-    rlist = np.arange(0, R, dr)
+def profileCalculator(rlist, profile, dr):
+    # calculates mass [kg], gravity [m/s2] and pressure [Pa] for a density profile
+    # rlist is the numpy array of radial values at which the profile is evaluated
+    # profile is a numpy array with the densities from r=0 to r=R
+    # dr is the step size of the profile
 
-    # set up rlists for mass calculation
-    # mantle gets an additional point to calculate the first point of the crust
-    rlistMantle = np.arange(0, innerRadius + dr, dr)
-    rlistCrust = np.arange(innerRadius, R, dr)
+    # check if the inputs are self-consistent
+    if rlist.shape[0] != round(R/dr) + 1:
+        raise ValueError("rlist does not have the expected length based on given dr \n"+\
+                         "Expected length (R="+str(R)+", dr="+str(dr)+"): " + str(round(R/dr)+1)+\
+                         "\nActual length: " + str(rlist.shape[0]))
 
-    # initialize empty lists to hold calculated values
-    MlistMantle = np.zeros((rlistMantle.shape[0]))
-    MlistCrust = np.zeros((rlistCrust.shape[0]))
+    # initialize list of masses
+    Mlist = np.zeros(rlist.shape[0])
 
-    # use Euler integrator to calculate mantle masses
-    for i, r in enumerate(rlistMantle[:-1]):
-        dMdrMantle = 4 * np.pi * innerDensity * r ** 2
-        MlistMantle[i + 1] = MlistMantle[i] + dMdrMantle * dr
-
-    # set first point of crust using mantle
-    MlistCrust[0] = MlistMantle[-1]
-    # delete last point of mantle (it will be included in crust)
-    MlistMantle = MlistMantle[:-1]
-
-    # use Euler integrator to calculate crust masses
-    for i, r in enumerate(rlistCrust[:-1]):
-        dMdrCrust = 4 * np.pi * outerDensity * r ** 2
-        MlistCrust[i + 1] = MlistCrust[i] + dMdrCrust * dr
-
-    # tie together mass lists and scale them
-    Mlist = np.concatenate((MlistMantle, MlistCrust))
-    Mlist1020 = Mlist / 1e20
+    # integrate mass
+    for i, r in enumerate(rlist[:-1]):
+        dMdr = 4 * np.pi * profile[i] * r ** 2
+        Mlist[i + 1] = Mlist[i] + dMdr * dr
 
     # calculate gravitational acceleration
-    g = (G * Mlist) / rlist ** 2
-    # correct for division by zero
-    g[0] = 0
+    glist = (G * Mlist) / rlist ** 2
+    # correct for division by 0
+    glist[0] = 0
 
-    # set up rlists for pressure calculation
-    # crust gets an additional point to calculate the first point of the mantle
-    rlistMantle = np.arange(0, innerRadius, dr)
-    rlistCrust = np.arange(innerRadius - dr, R, dr)
+    # initialize list of pressures
+    plist = np.zeros((rlist.shape[0]))
 
-    # initialize empty lists to hold calculated values
-    plistMantle = np.zeros((rlistMantle.shape[0]))
-    plistCrust = np.zeros((rlistCrust.shape[0]))
+    # integrate pressure
+    for i, r in enumerate(np.flip(rlist)[:-1]):
+        dpdr = G * 4 / 3 * np.pi * np.flip(profile)[i] ** 2 * r
+        plist[i + 1] = plist[i] + dpdr * dr
 
-    # use Euler integrator to calculate crust pressures
-    for i, r in enumerate(np.flip(rlistCrust)[:-1]):
-        dpdrCrust = G * 4 / 3 * np.pi * outerDensity ** 2 * r
-        plistCrust[i + 1] = plistCrust[i] + dpdrCrust * dr
+    # flip list of pressures right way up
+    plist = np.flip(plist)
 
-    # set first point of mantle using crust
-    plistMantle[0] = plistCrust[-1]
-    # delete last point of crust (it will be included in mantle)
-    plistCrust = plistCrust[:-1]
-
-    # use Euler integrator to calculate mantle pressures
-    for i, r in enumerate(np.flip(rlistMantle)[:-1]):
-        dpdrMantle = G * 4 / 3 * np.pi * innerDensity ** 2 * r
-        plistMantle[i + 1] = plistMantle[i] + dpdrMantle * dr
-
-    # tie together pressure lists and scale them
-    plist = np.concatenate((plistCrust, plistMantle))
-    plistMPa = np.flip(plist) / 1e6
-
-    # get radius in km
-    rlistkm = rlist / 1e3
-
-    return rlistkm, Mlist1020, g, plistMPa
+    return Mlist, glist, plist
