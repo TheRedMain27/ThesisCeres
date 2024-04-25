@@ -1,5 +1,3 @@
-import math
-import numpy as np
 import scipy.linalg
 import matplotlib
 import matplotlib.pyplot as plt
@@ -10,16 +8,16 @@ def determineLinearCoefficients():
     # returns coefficients [c0, c1], where rho = c0 - c1 * r
     A = np.array([[1/3, -R/4],
                   [1/5, -R/6]])
-    b = np.array([M / (4 * math.pi * R ** 3),
-                  I / (4 * math.pi * R ** 5)])
+    b = np.array([M / (4 * np.pi * R ** 3),
+                  I / (4 * np.pi * R ** 5)])
     return scipy.linalg.solve(A, b)
 def determineQuadraticCoefficients(c0):
     # solves quadratic density profile constrained by mass and moment of inertia
     # returns coefficients [c1, c2], given c0, where rho = c0 + c1 * r + c2 * r^2
     A = np.array([[R/4, (R**2)/5],
                   [R/6, (R**2)/7]])
-    b = np.array([M / (4 * math.pi * R ** 3) - c0 / 3,
-                  I / (4 * math.pi * R ** 5) - c0 / 5])
+    b = np.array([M / (4 * np.pi * R ** 3) - c0 / 3,
+                  I / (4 * np.pi * R ** 5) - c0 / 5])
     return scipy.linalg.solve(A, b)
 
 def determineCubicCoefficients(c0):
@@ -28,8 +26,36 @@ def determineCubicCoefficients(c0):
     # assumption: slope of density at r = 0 is zero --> c1 = 0
     A = np.array([[(R**2)/5, (R**3)/6],
                   [(R**2)/7, (R**3)/8]])
-    b = np.array([M / (4 * math.pi * R ** 3) - c0 / 3,
-                  I / (4 * math.pi * R ** 5) - c0 / 5])
+    b = np.array([M / (4 * np.pi * R ** 3) - c0 / 3,
+                  I / (4 * np.pi * R ** 5) - c0 / 5])
+    return scipy.linalg.solve(A, b)
+
+def determine5thOrderCoefficients():
+    # solves 5th order polynomial density profile constrained by mass and moment of inertia
+    # returns coefficients [c0, c3, c4, c5], where rho = c0 + c3 * r^3 + c4 * r^4 + c5 * r^5
+    # assumptions: rho'(0) = rho'(R) = rho"(0) = rho"(R) = 0
+    A = np.array([[0, 3, 4*R, 5*R**2],
+                  [0, 6, 12*R, 20*R**2],
+                  [1/3, (R**3)/6, (R**4)/7, (R**5)/8],
+                  [1/5, (R**3)/8, (R**4)/9, (R**5)/10]])
+    b = np.array([0,
+                  0,
+                  M / (4 * np.pi * R ** 3),
+                  I / (4 * np.pi * R ** 5)])
+    return scipy.linalg.solve(A, b)
+
+def determine6thOrderCoefficients(c0):
+    # solves 6th order polynomial density profile constrained by mass and moment of inertia
+    # returns coefficients [c0, c3, c4, c5], given c0, where rho = c0 + c3 * r^3 + c4 * r^4 + c5 * r^5 + c6 * r^6
+    # assumptions: rho'(0) = rho'(R) = rho"(0) = rho"(R) = 0
+    A = np.array([[3, 4*R, 5*R**2, 6*R**3],
+                  [6, 12*R, 20*R**2, 30*R**3],
+                  [(R**3)/6, (R**4)/7, (R**5)/8, (R**6)/9],
+                  [(R**3)/8, (R**4)/9, (R**5)/10, (R**6)/11]])
+    b = np.array([0,
+                  0,
+                  M / (4 * np.pi * R ** 3) - c0/3,
+                  I / (4 * np.pi * R ** 5) - c0/5])
     return scipy.linalg.solve(A, b)
 
 if __name__ == "__main__":
@@ -57,8 +83,8 @@ if __name__ == "__main__":
         profile = c0 + c1 * rlist + c2 * rlist ** 2
 
         axs[1].plot(profile, rlist/1e3, label = r"$\rho_{core}$ = " + str(c0))
-        axs[1].legend()
-        axs[1].set_title("Quadratic")
+    axs[1].legend()
+    axs[1].set_title("Quadratic")
 
     c0list = np.arange(1000, 5000, 1000)
     for c0 in c0list:
@@ -69,8 +95,8 @@ if __name__ == "__main__":
         profile = c0 + c2 * rlist ** 2 + c3 * rlist ** 3
 
         axs[2].plot(profile, rlist / 1e3, label=r"$\rho_{core}$ = " + str(c0))
-        axs[2].legend()
-        axs[2].set_title("Cubic")
+    axs[2].legend()
+    axs[2].set_title("Cubic")
 
     plt.tight_layout()
     plt.savefig(r"Images/PolynomialModels.pdf")

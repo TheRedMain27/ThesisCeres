@@ -1,15 +1,13 @@
 """
 This file contains some code that is used multiple times, to avoid duplicate code.
 """
-import math
 import numpy as np
-import scipy.linalg
 
 # constants
 G = 6.67430e-11
 R = 470e3  # [m], park 2016
 M = 62.62736e9 / G  # [kg], konopliv 2018
-I = 0.37 * M * R ** 2  #[kg*m2] park, 2016
+I = 0.375 * M * R ** 2  #[kg*m2] mao and mckinnon, 2018
 
 def profileCalculator(rlist, profile, dr):
     # calculates mass [kg], gravity [m/s2] and pressure [Pa] for a density profile
