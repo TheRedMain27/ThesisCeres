@@ -21,35 +21,48 @@ def determine2LayerModel(innerDensity, outerDensityGuess):
 
 if __name__ == "__main__":
     outerDensityGuess = 2000
-    innerDensityRange = [2400, 2450, 2525, 2650]  # from Ruesch et al., 2019
-    labels = [r"$\rho_{mantle}$ = " + str(density) for density in innerDensityRange]
+
+    # 2200<rho<2650 from Ruesch et al., 2019; rho>2400 from TwoLayerModels
+    innerDensityRange = np.arange(2400, 2650 + 10, 10)
 
     dr = 1
     rlist = np.arange(0, R + dr, dr)
 
     matplotlib.rcParams.update({'font.size': 18})
     fig, axs = plt.subplots(1, 2, figsize=(10, 6))
-    fig.supylabel("Radius [km]")
-    axs[0].set_xlabel("Density [kg/m$^{3}$]")
-    axs[1].set_xlabel("Pressure [MPa]")
+    fig.supxlabel("Inner Density [kg/m$^{3}$]")
+    axs[0].set_ylabel("Outer Density [kg/m$^{3}$]")
+    axs[1].set_ylabel("Crustal Thickness [km]")
 
-    for i, innerDensity in enumerate(innerDensityRange):
-        outerDensity, innerRadius = determine2LayerModel(innerDensity, outerDensityGuess)
+    selectedValue = 2500
+    outerDensity, innerRadius = determine2LayerModel(selectedValue, outerDensityGuess)
 
-        print("Inner Density = " + str(innerDensity) + " [kg/m3]")
-        print("Outer Density = " + str(outerDensity) + " [kg/m3]")
-        print("Crustal Thickness = " + str((R - innerRadius) / 1e3) + " [km]")
+    axs[0].axvline(selectedValue, color="black", alpha=0.5, linestyle="--")
+    axs[0].axhline(outerDensity, color="black", alpha=0.5, linestyle="--")
 
-        profile = np.ones(rlist.shape[0])
-        profile[:round(innerRadius / dr) + 1] *= innerDensity
-        profile[round(innerRadius / dr) + 1:] *= outerDensity
-        MVector, gVector, PVector = profileCalculator(rlist, profile, dr)
+    axs[1].axvline(selectedValue, color="black", alpha=0.5, linestyle="--")
+    axs[1].axhline((R - innerRadius)/1e3, color="black", alpha=0.5, linestyle="--")
 
-        axs[0].plot(profile, rlist / 1e3, label = labels[i])
-        axs[1].plot(PVector / 1e6, rlist / 1e3, label = labels[i])
+    baseI = I
+    for IModification in [-0.001, 0, 0.001]:
+        I = baseI + IModification * M * R ** 2
+        Inorm = I / (M * R ** 2)
+
+        outerDensityList = []
+        crustalThicknessList = []
+
+        for innerDensity in innerDensityRange:
+            outerDensity, innerRadius = determine2LayerModel(innerDensity, outerDensityGuess)
+            outerDensityList.append(outerDensity)
+            crustalThicknessList.append((R - innerRadius) / 1e3)
+
+        axs[0].plot(innerDensityRange, outerDensityList, label=r"$\frac{I}{MR^{2}}$="+str(Inorm))
+        axs[1].plot(innerDensityRange, crustalThicknessList, label=r"$\frac{I}{MR^{2}}$="+str(Inorm))
+
+    I = baseI
 
     axs[0].legend()
     axs[1].legend()
     plt.tight_layout()
-    plt.savefig(r"Images/SelectedModels.pdf")
+    plt.savefig(r"Images/SelectedModelRange.pdf")
     plt.show()

@@ -45,7 +45,6 @@ if __name__ == "__main__":
     fig.supylabel("Layer Boundary Radius [km]")
 
     ax2 = axs[0].twiny()
-    ax2.set_xlim(axs[0].get_xlim())
     ax2.axvline(innerDensity[-1], color="black", alpha=0.5, linestyle="--")
     ax2.axvline(outerDensity[0], color="black", alpha=0.5, linestyle="--")
     ax2.set_xticks([outerDensity[0], innerDensity[-1]])
