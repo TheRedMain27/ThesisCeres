@@ -83,4 +83,5 @@ if __name__ == "__main__":
     axs[1].legend()
     plt.tight_layout()
     plt.savefig(r"Images/SelectedModelRange.pdf")
+    plt.savefig(r"Images/SelectedModelRange.png")
     plt.show()

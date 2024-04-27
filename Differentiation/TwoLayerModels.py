@@ -60,5 +60,6 @@ if __name__ == "__main__":
 
     plt.tight_layout()
     plt.savefig(r"Images/TwoLayerModels.pdf")
+    plt.savefig(r"Images/TwoLayerModels.png")
     plt.show()
 

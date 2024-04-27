@@ -100,4 +100,5 @@ if __name__ == "__main__":
 
     plt.tight_layout()
     plt.savefig(r"Images/PolynomialModels.pdf")
+    plt.savefig(r"Images/PolynomialModels.png")
     plt.show()
