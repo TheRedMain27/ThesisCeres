@@ -37,6 +37,9 @@ if __name__ == "__main__":
 
     selectedValue = 1750
     innerDensity, innerRadius = determine2LayerModel(selectedValue, innerDensityGuess)
+    print("Outer Density = " + str(round(selectedValue)))
+    print("Inner Density = " + str(round(innerDensity)))
+    print("Crustal Thickness = " + str(round((R - innerRadius) / 1e3, 2)))
 
     axs[0].axvline(selectedValue, color="black", alpha=0.5, linestyle="--")
     axs[0].axhline(innerDensity, color="black", alpha=0.5, linestyle="--")
