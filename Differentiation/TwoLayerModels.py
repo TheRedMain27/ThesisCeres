@@ -1,6 +1,3 @@
-import scipy.linalg
-import matplotlib
-import matplotlib.pyplot as plt
 from Tools import *
 
 def determine2LayerDensities(innerRadius):

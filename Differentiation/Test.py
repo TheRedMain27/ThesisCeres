@@ -1,5 +1,3 @@
-import matplotlib
-import matplotlib.pyplot as plt
 from Tools import *
 import TwoLayerModels
 

@@ -2,12 +2,32 @@
 This file contains some code that is used multiple times, to avoid duplicate code.
 """
 import numpy as np
+import matplotlib.pyplot as plt
+import matplotlib
+import scipy.linalg
+import scipy.optimize
 
 # constants
 G = 6.67430e-11
 R = 470e3  # [m], park 2016
 M = 62.62736e9 / G  # [kg], konopliv 2018
 I = 0.375 * M * R ** 2  #[kg*m2] mao and mckinnon, 2018
+
+iceDensity = 917  # [kg/m3]
+olivineDensity = 3270  # [kg/m3]
+waterDensity = 1000  # [kg/m3]
+dissolvedSalt = 360  # [kg/m3]
+brineDensity = waterDensity + dissolvedSalt  # [kg/m3]
+
+waterMolarMass = 2 * 1.008 + 15.999  # [g/mol]
+olivineMolarMass = (55.845 + 24.305) + 28.085 + 4 * 15.999  # [g/mol], same amount of Fe and Mg in the olivine
+saltMolarMass = 22.99 + 35.45  # [g/mol], NaCl
+
+serpentiniteDensity = 2600
+serpentiniteMolarMass = 3 * 24.305 + 2 * 28.085 + 9 * 15.999 + 4 * 1.008
+
+ironDensity = 7874
+ironMolarMass = 55.845
 
 def profileCalculator(rlist, profile, dr):
     # calculates mass [kg], gravity [m/s2] and pressure [Pa] for a density profile

@@ -1,6 +1,3 @@
-import scipy.optimize
-import matplotlib
-import matplotlib.pyplot as plt
 from Tools import *
 
 def innerRadiusDifference(innerDensity, outerDensity):
