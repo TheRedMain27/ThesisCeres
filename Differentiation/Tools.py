@@ -14,7 +14,7 @@ M = 62.62736e9 / G  # [kg], konopliv 2018
 I = 0.375 * M * R ** 2  #[kg*m2] mao and mckinnon, 2018
 
 iceDensity = 917  # [kg/m3]
-olivineDensity = 3270  # [kg/m3]
+olivineDensity = 3320  # [kg/m3]
 waterDensity = 1000  # [kg/m3]
 dissolvedSalt = 360  # [kg/m3]
 brineDensity = waterDensity + dissolvedSalt  # [kg/m3]
@@ -24,7 +24,7 @@ olivineMolarMass = (55.845 + 24.305) + 28.085 + 4 * 15.999  # [g/mol], same amou
 saltMolarMass = 22.99 + 35.45  # [g/mol], NaCl
 
 serpentiniteDensity = 2600
-serpentiniteMolarMass = 3 * 24.305 + 2 * 28.085 + 9 * 15.999 + 4 * 1.008
+serpentiniteMolarMass = 3 * (55.845 + 24.305) / 2 + 2 * 28.085 + 9 * 15.999 + 4 * 1.008
 
 ironDensity = 7874
 ironMolarMass = 55.845
