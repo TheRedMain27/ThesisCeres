@@ -6,12 +6,12 @@ def determineCompositions(outerDensity, innerDensity):
     # Assumptions:
     # 1. crust is made up of water ice and serpentinite
     # 2. mantle is made up of brine with 360 g/L dissolved NaCl and serpentinite
-    # 3. serpentinite density is 3320 kg/m3
+    # 3. serpentinite density is 2600 kg/m3
 
-    crustserpentiniteFraction = (outerDensity - iceDensity) / (serpentiniteDensity - iceDensity)
-    mantleserpentiniteFraction = (innerDensity - brineDensity) / (serpentiniteDensity - brineDensity)
+    crustSerpentiniteFraction = (outerDensity - iceDensity) / (serpentiniteDensity - iceDensity)
+    mantleSerpentiniteFraction = (innerDensity - brineDensity) / (serpentiniteDensity - brineDensity)
 
-    return crustserpentiniteFraction, mantleserpentiniteFraction
+    return crustSerpentiniteFraction, mantleSerpentiniteFraction
 
 def atomCounter(mantleRadius, mantleDensity, crustDensity):
     # determines atomic proportions based on densities and crustal thickness
