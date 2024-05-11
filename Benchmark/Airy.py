@@ -21,6 +21,7 @@ if __name__ == "__main__":
     plt.imshow(Airy / 1e3, cmap="hot")
     plt.colorbar()
     plt.show()
+    Airy.tofile("Results/AiryEqualMasses.txt")
 
     Airy = equalPressures()
     print(np.min(Airy))
@@ -28,3 +29,4 @@ if __name__ == "__main__":
     plt.imshow(Airy / 1e3, cmap="hot")
     plt.colorbar()
     plt.show()
+    Airy.tofile("Results/AiryEqualPressures.txt")
