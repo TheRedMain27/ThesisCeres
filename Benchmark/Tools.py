@@ -26,6 +26,8 @@ compensationDepth = 60e3  # [m]
 crustDensity = 2.81e3  # [kg/m3]
 mantleDensity = 4.5e3  # [kg/m3]
 
+mohoFileName = "Data/MohoCrustalThicknessSzwillusEtAl2019"  # (Szwillus et al., 2019)
+
 def readTopo():
     # reads topography data from file and returns np array
     data = np.fromfile(topoFileName, dtype=topoDataType, count=-1)
@@ -59,11 +61,12 @@ def calculateLowerCrustGravity():
     residualMass = M - crustMass
     return G * residualMass / (R - compensationDepth) ** 2
 
+def readMoho():
+    moho = np.loadtxt(mohoFileName, skiprows=34, usecols=2)
+    return np.reshape(moho, (180,360))
+
 if __name__ == "__main__":
-    topo = readTopo()
-    plt.imshow(topo / 1e3, cmap="hot")
+    moho = readMoho()
+    plt.imshow(moho, cmap="hot")
     plt.colorbar()
     plt.show()
-
-    calculateAverageThickness()
-    calculateAverageDensity()
