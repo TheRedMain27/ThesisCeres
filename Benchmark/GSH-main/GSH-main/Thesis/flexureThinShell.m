@@ -1,4 +1,4 @@
-function FlexureCrust = flexureThinShell(airyFilename, bulkModulus,...
+function FlexureCrust = flexureThinShell(airyCrust, bulkModulus,...
     shearModulus, elasticThickness, mantleDensity, crustDensity, g0, ...
     radius)
     
@@ -8,9 +8,7 @@ function FlexureCrust = flexureThinShell(airyFilename, bulkModulus,...
         (6 * bulkModulus + 2 * shearModulus);
     YoungsModulus = 3 * bulkModulus * (1 - 2 * Poisson);
     
-    Airy = readAiry(airyFilename);
-    
-    AiryCS = GSHA(Airy, 179);
+    AiryCS = GSHA(airyCrust, 179);
     AirySC = cs2sc(AiryCS);
     
     n = 1:size(AirySC,1);
@@ -34,5 +32,5 @@ function FlexureCrust = flexureThinShell(airyFilename, bulkModulus,...
     for m = 1:size(AirySC,2)
         AirySC_Flexure(:,m) = AirySC(:,m).*PHI';
     end
-    FlexureCrust = GSHS(AirySC_Flexure, 0.5:359.5, 0.5:179.5, 179)/1e3;
+    FlexureCrust = GSHS(AirySC_Flexure, 0.5:359.5, 0.5:179.5, 179);
 end
