@@ -18,7 +18,7 @@ radius = 6371e3;
 mass = 3.986004418e14 / 6.6743e-11;
 compensationDepth = 20e3;
 
-% topography = readTopo(topoFileName);
+topography = readTopo(topoFileName);
 
 % AiryCrust = airyEqualMasses(topography, crustDensity, ...
 %     mantleDensity, compensationDepth);
@@ -36,8 +36,21 @@ compensationDepth = 20e3;
 
 mohoDepth = readMoho(mohoFileName);
 
-fig = figure;
+geoid = getGeoid();
 
+figure(1)
+colormap('hot');
+imagesc(topography);
+colorbar;
+hold on
+
+figure(2)
 colormap('hot');
 imagesc(mohoDepth);
 colorbar;
+
+figure(3)
+colormap('hot');
+imagesc(geoid);
+colorbar;
+hold off
