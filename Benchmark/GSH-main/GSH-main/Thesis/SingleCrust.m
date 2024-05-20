@@ -50,6 +50,11 @@ if min(flexureCrust, [], "all") < 0
         string(min(flexureCrust, [], "all") / 1e3) + " [km]")
 end
 
+modelDepth = flexureCrust - topography + geoid;
+depthError = abs(modelDepth - mohoDepth * 1e3);
+mohoUncertainty = readMohoUncertainty(mohoFileName) * 1e3;
+errorUncertaintyRatio = depthError ./ mohoUncertainty;
+
 latitudeTicks = 0:30:180;
 latitudeTickLabels = string(flip(-90:30:90));
 longitudeTicks = 0:60:360;
@@ -104,3 +109,17 @@ yticks(latitudeTicks);
 yticklabels(latitudeTickLabels);
 savefig("Images/PercentageModelError")
 saveas(gcf, "Images/PNG/PercentageModelError.png")
+
+errorUncertaintyRatio(errorUncertaintyRatio > 2) = 2;
+
+figure(5)
+colormap('hot');
+imagesc(errorUncertaintyRatio);
+bar = colorbar;
+bar.Label.String = "Depth Error to Uncertainty Ratio";
+xticks(longitudeTicks);
+xticklabels(longitudeTickLabels);
+yticks(latitudeTicks);
+yticklabels(latitudeTickLabels);
+savefig("Images/ErrorUncertaintyRatio")
+saveas(gcf, "Images/PNG/ErrorUncertaintyRatio.png")
