@@ -1,6 +1,6 @@
 function AiryCrust = airyEqualMasses(topography, crustDensity, ...
-    mantleDensity, compensationDepth)
+    mantleDensity, referenceDepth)
     extraDepth = topography * crustDensity / ...
         (mantleDensity - crustDensity);
-    AiryCrust = compensationDepth + topography + extraDepth;
+    AiryCrust = referenceDepth + topography + extraDepth;
 end
