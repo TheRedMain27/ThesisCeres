@@ -58,8 +58,8 @@ ylabel("RMSE [km]")
 yyaxis right
 plot((baseReferenceDepth + depthAlterations) / 1e3, minimumThicknesses / 1e3)
 ylabel("Minimum Crustal Thickness [km]")
-savefig("Images/ReferenceDepthOptimization")
-saveas(gcf, "Images/PNG/ReferenceDepthOptimization.png")
+savefig("Images/SingleVariableOptimization/ReferenceDepthOptimization")
+saveas(gcf, "Images/SingleVariableOptimization/PNG/ReferenceDepthOptimization.png")
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Densities %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -97,8 +97,8 @@ ylabel("RMSE [km]")
 yyaxis right
 plot((baseMantleDensity + densityAlterations), minimumThicknesses / 1e3)
 ylabel("Minimum Crustal Thickness [km]")
-savefig("Images/MantleDensityOptimization")
-saveas(gcf, "Images/PNG/MantleDensityOptimization.png")
+savefig("Images/SingleVariableOptimization/MantleDensityOptimization")
+saveas(gcf, "Images/SingleVariableOptimization/PNG/MantleDensityOptimization.png")
 
 %% crust density
 errors = zeros(1,sizeDensityAlterations(2));
@@ -131,8 +131,8 @@ ylabel("RMSE [km]")
 yyaxis right
 plot((baseCrustDensity + densityAlterations), minimumThicknesses / 1e3)
 ylabel("Minimum Crustal Thickness [km]")
-savefig("Images/CrustDensityOptimization")
-saveas(gcf, "Images/PNG/CrustDensityOptimization.png")
+savefig("Images/SingleVariableOptimization/CrustDensityOptimization")
+saveas(gcf, "Images/SingleVariableOptimization/PNG/CrustDensityOptimization.png")
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%% Elastic Thickness %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -168,8 +168,8 @@ ylabel("RMSE [km]")
 yyaxis right
 plot((baseElasticThickness + thicknessAlterations) / 1e3, minimumThicknesses / 1e3)
 ylabel("Minimum Crustal Thickness [km]")
-savefig("Images/ElasticThicknessOptimization")
-saveas(gcf, "Images/PNG/ElasticThicknessOptimization.png")
+savefig("Images/SingleVariableOptimization/ElasticThicknessOptimization")
+saveas(gcf, "Images/SingleVariableOptimization/PNG/ElasticThicknessOptimization.png")
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Moduli %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -207,8 +207,8 @@ ylabel("RMSE [km]")
 yyaxis right
 plot((baseBulkModulus + modulusAlterations) / 1e9, minimumThicknesses / 1e3)
 ylabel("Minimum Crustal Thickness [km]")
-savefig("Images/BulkModulusOptimization")
-saveas(gcf, "Images/PNG/BulkModulusOptimization.png")
+savefig("Images/SingleVariableOptimization/BulkModulusOptimization")
+saveas(gcf, "Images/SingleVariableOptimization/PNG/BulkModulusOptimization.png")
 
 %% crust density
 errors = zeros(1,sizeModulusAlterations(2));
@@ -241,6 +241,6 @@ ylabel("RMSE [km]")
 yyaxis right
 plot((baseShearModulus + modulusAlterations) / 1e9, minimumThicknesses / 1e3)
 ylabel("Minimum Crustal Thickness [km]")
-savefig("Images/ShearModulusOptimization")
-saveas(gcf, "Images/PNG/ShearModulusOptimization.png")
+savefig("Images/SingleVariableOptimization/ShearModulusOptimization")
+saveas(gcf, "Images/SingleVariableOptimization/PNG/ShearModulusOptimization.png")
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

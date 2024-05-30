@@ -69,8 +69,8 @@ xticks(longitudeTicks);
 xticklabels(longitudeTickLabels);
 yticks(latitudeTicks);
 yticklabels(latitudeTickLabels);
-savefig("Images/MeasuredCrustThickness")
-saveas(gcf, "Images/PNG/MeasuredCrustThickness.png")
+savefig("Images/SingleCrust/MeasuredCrustThickness")
+saveas(gcf, "Images/SingleCrust/PNG/MeasuredCrustThickness.png")
 
 figure(2)
 colormap('hot');
@@ -81,8 +81,8 @@ xticks(longitudeTicks);
 xticklabels(longitudeTickLabels);
 yticks(latitudeTicks);
 yticklabels(latitudeTickLabels);
-savefig("Images/ModelCrustThickness")
-saveas(gcf, "Images/PNG/ModelCrustThickness.png")
+savefig("Images/SingleCrust/ModelCrustThickness")
+saveas(gcf, "Images/SingleCrust/PNG/ModelCrustThickness.png")
 
 figure(3)
 colormap('hot');
@@ -93,8 +93,8 @@ xticks(longitudeTicks);
 xticklabels(longitudeTickLabels);
 yticks(latitudeTicks);
 yticklabels(latitudeTickLabels);
-savefig("Images/ModelError")
-saveas(gcf, "Images/PNG/ModelError.png")
+savefig("Images/SingleCrust/ModelError")
+saveas(gcf, "Images/SingleCrust/PNG/ModelError.png")
 
 percentageError(percentageError > 100) = 100;
 
@@ -107,8 +107,8 @@ xticks(longitudeTicks);
 xticklabels(longitudeTickLabels);
 yticks(latitudeTicks);
 yticklabels(latitudeTickLabels);
-savefig("Images/PercentageModelError")
-saveas(gcf, "Images/PNG/PercentageModelError.png")
+savefig("Images/SingleCrust/PercentageModelError")
+saveas(gcf, "Images/SingleCrust/PNG/PercentageModelError.png")
 
 errorUncertaintyRatio(errorUncertaintyRatio > 2) = 2;
 
@@ -121,5 +121,5 @@ xticks(longitudeTicks);
 xticklabels(longitudeTickLabels);
 yticks(latitudeTicks);
 yticklabels(latitudeTickLabels);
-savefig("Images/ErrorUncertaintyRatio")
-saveas(gcf, "Images/PNG/ErrorUncertaintyRatio.png")
+savefig("Images/SingleCrust/ErrorUncertaintyRatio")
+saveas(gcf, "Images/SingleCrust/PNG/ErrorUncertaintyRatio.png")
