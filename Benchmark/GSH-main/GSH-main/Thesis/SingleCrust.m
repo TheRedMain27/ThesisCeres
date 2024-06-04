@@ -1,6 +1,7 @@
 clear;
 close all;
 clc;
+clearvars;
 
 addpath('..\Tools');
 
@@ -15,10 +16,10 @@ measuredThickness = mohoDepth * 1e3 - geoid + topography;
 
 bulkModulus = 128.8e9; % olivine, (Mao et al., 2015)
 shearModulus = 81.6e9; % olivine, (Mao er al., 2015)
-elasticThickness = 17e3; % PPI slides
+elasticThickness = 34e3; % (Watts and Moore, 2017)
 
-mantleDensity = 3150;
-crustDensity = 2620;
+mantleDensity = 3320; % olivine mineral database
+crustDensity = 2835; % (Christensen and Mooney, 1995)
 g0 = 9.80665;
 radius = 6371e3;
 mass = 3.986004418e14 / 6.6743e-11;
@@ -60,9 +61,15 @@ latitudeTickLabels = string(flip(-90:30:90));
 longitudeTicks = 0:60:360;
 longitudeTickLabels = string(-180:60:180);
 
-figure(1)
+figurePosition = get(groot, 'DefaultFigurePosition');
+figurePosition(1) = figurePosition(1) - (2 * figurePosition(4) - ...
+    figurePosition(3)) / 2;
+figurePosition(3) = 2 * figurePosition(4);
+
+figure('Position', figurePosition)
 colormap('hot');
 imagesc(measuredThickness / 1e3);
+axis image
 bar = colorbar;
 bar.Label.String = "Measured Crust Thickness [km]";
 xticks(longitudeTicks);
@@ -72,9 +79,10 @@ yticklabels(latitudeTickLabels);
 savefig("Images/SingleCrust/MeasuredCrustThickness")
 saveas(gcf, "Images/SingleCrust/PNG/MeasuredCrustThickness.png")
 
-figure(2)
+figure('Position', figurePosition)
 colormap('hot');
 imagesc(flexureCrust / 1e3);
+axis image
 bar = colorbar;
 bar.Label.String = "Model Crust Thickness [km]";
 xticks(longitudeTicks);
@@ -84,9 +92,10 @@ yticklabels(latitudeTickLabels);
 savefig("Images/SingleCrust/ModelCrustThickness")
 saveas(gcf, "Images/SingleCrust/PNG/ModelCrustThickness.png")
 
-figure(3)
+figure('Position', figurePosition)
 colormap('hot');
 imagesc(error / 1e3);
+axis image
 bar = colorbar;
 bar.Label.String = "Model Error [km]";
 xticks(longitudeTicks);
@@ -98,9 +107,10 @@ saveas(gcf, "Images/SingleCrust/PNG/ModelError.png")
 
 percentageError(percentageError > 100) = 100;
 
-figure(4)
+figure('Position', figurePosition)
 colormap('hot');
 imagesc(percentageError);
+axis image
 bar = colorbar;
 bar.Label.String = "Model Error [%]";
 xticks(longitudeTicks);
@@ -112,9 +122,10 @@ saveas(gcf, "Images/SingleCrust/PNG/PercentageModelError.png")
 
 errorUncertaintyRatio(errorUncertaintyRatio > 2) = 2;
 
-figure(5)
+figure('Position', figurePosition)
 colormap('hot');
 imagesc(errorUncertaintyRatio);
+axis image
 bar = colorbar;
 bar.Label.String = "Depth Error to Uncertainty Ratio";
 xticks(longitudeTicks);

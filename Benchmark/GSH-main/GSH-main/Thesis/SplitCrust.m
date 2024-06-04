@@ -150,9 +150,15 @@ latitudeTickLabels = string(flip(-90:30:90));
 longitudeTicks = 0:60:360;
 longitudeTickLabels = string(-180:60:180);
 
-figure(1)
+figurePosition = get(groot, 'DefaultFigurePosition');
+figurePosition(1) = figurePosition(1) - (2 * figurePosition(4) - ...
+    figurePosition(3)) / 2;
+figurePosition(3) = 2 * figurePosition(4);
+
+figure('Position', figurePosition)
 colormap('hot');
 imagesc(measuredThickness / 1e3);
+axis image
 bar = colorbar;
 bar.Label.String = "Measured Crust Thickness [km]";
 xticks(longitudeTicks);
@@ -162,9 +168,10 @@ yticklabels(latitudeTickLabels);
 savefig("Images/SplitCrust/MeasuredCrustThickness")
 saveas(gcf, "Images/SplitCrust/PNG/MeasuredCrustThickness.png")
 
-figure(2)
+figure('Position', figurePosition)
 colormap('hot');
 imagesc(flexureCrust / 1e3, "AlphaData", mask);
+axis image
 set(gca, 'color', [0 0 1])
 bar = colorbar;
 bar.Label.String = "Model Crust Thickness [km]";
@@ -175,9 +182,10 @@ yticklabels(latitudeTickLabels);
 savefig("Images/SplitCrust/ModelCrustThickness")
 saveas(gcf, "Images/SplitCrust/PNG/ModelCrustThickness.png")
 
-figure(3)
+figure('Position', figurePosition)
 colormap('hot');
 imagesc(error / 1e3, "AlphaData", mask);
+axis image
 set(gca, 'color', [0 0 1])
 bar = colorbar;
 bar.Label.String = "Model Error [km]";
@@ -190,9 +198,10 @@ saveas(gcf, "Images/SplitCrust/PNG/ModelError.png")
 
 percentageError(percentageError > 100) = 100;
 
-figure(4)
+figure('Position', figurePosition)
 colormap('hot');
 imagesc(percentageError, "AlphaData", mask);
+axis image
 set(gca, 'color', [0 0 1])
 bar = colorbar;
 bar.Label.String = "Model Error [%]";
@@ -205,9 +214,10 @@ saveas(gcf, "Images/SplitCrust/PNG/PercentageModelError.png")
 
 errorUncertaintyRatio(errorUncertaintyRatio > 2) = 2;
 
-figure(5)
+figure('Position', figurePosition)
 colormap('hot');
 imagesc(errorUncertaintyRatio, "AlphaData", mask);
+axis image
 set(gca, 'color', [0 0 1])
 bar = colorbar;
 bar.Label.String = "Depth Error to Uncertainty Ratio";

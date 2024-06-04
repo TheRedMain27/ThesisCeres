@@ -188,9 +188,22 @@ if runVisualization
     [error, percentageError, wrongRMS, minError, maxError] = ...
         characterizeError(measuredThickness, multiCrust);
     
+    disp(" ")
+    disp("Meso- and Cenozoic average percentage error: " + ...
+        string(mean(percentageError(mesozoicCenozoicMap), "all")) + " [%]")
+    disp("Paleozoic average percentage error: " + ...
+        string(mean(percentageError(paleozoicMap), "all")) + " [%]")
+    disp("Proterozoic average percentage error: " + ...
+        string(mean(percentageError(proterozoicMap), "all")) + " [%]")
+    disp("Archean average percentage error: " + ...
+        string(mean(percentageError(archeanMap), "all")) + " [%]")
+    disp("Combined average percentage error: " + ...
+        string(mean(percentageError(fullCrustMap), "all")) + " [%]")
+    
     multiCrust(~fullCrustMap) = mean(multiCrust, "all");
     error(~fullCrustMap) = 0;
-    percentageError(~fullCrustMap) = mean(percentageError, "all");
+    percentageError(~fullCrustMap) = ...
+        mean(percentageError(fullCrustMap), "all");
     
     modelDepth = multiCrust - topography + geoid;
     depthError = abs(modelDepth - mohoDepth * 1e3);
@@ -201,10 +214,16 @@ if runVisualization
     latitudeTickLabels = string(flip(-90:30:90));
     longitudeTicks = 0:60:360;
     longitudeTickLabels = string(-180:60:180);
+
+    figurePosition = get(groot, 'DefaultFigurePosition');
+    figurePosition(1) = figurePosition(1) - (2 * figurePosition(4) - ...
+        figurePosition(3)) / 2;
+    figurePosition(3) = 2 * figurePosition(4);
     
-    figure(1)
+    figure('Position', figurePosition)
     colormap('hot');
     imagesc(measuredThickness / 1e3);
+    axis image
     bar = colorbar;
     bar.Label.String = "Measured Crust Thickness [km]";
     xticks(longitudeTicks);
@@ -214,9 +233,10 @@ if runVisualization
     savefig("Images/MultiCrust/MeasuredCrustThickness")
     saveas(gcf, "Images/MultiCrust/PNG/MeasuredCrustThickness.png")
     
-    figure(2)
+    figure('Position', figurePosition)
     colormap('hot');
     imagesc(multiCrust / 1e3, "AlphaData", fullCrustMap);
+    axis image
     set(gca, 'color', [0 0 1])
     bar = colorbar;
     bar.Label.String = "Model Crust Thickness [km]";
@@ -227,9 +247,10 @@ if runVisualization
     savefig("Images/MultiCrust/ModelCrustThickness")
     saveas(gcf, "Images/MultiCrust/PNG/ModelCrustThickness.png")
 
-    figure(3)
+    figure('Position', figurePosition)
     colormap('hot');
     imagesc(error / 1e3, "AlphaData", fullCrustMap);
+    axis image
     set(gca, 'color', [0 0 1])
     bar = colorbar;
     bar.Label.String = "Model Error [km]";
@@ -242,9 +263,10 @@ if runVisualization
     
     percentageError(percentageError > 100) = 100;
     
-    figure(4)
+    figure('Position', figurePosition)
     colormap('hot');
     imagesc(percentageError, "AlphaData", fullCrustMap);
+    axis image
     set(gca, 'color', [0 0 1])
     bar = colorbar;
     bar.Label.String = "Model Error [%]";
@@ -257,9 +279,10 @@ if runVisualization
     
     errorUncertaintyRatio(errorUncertaintyRatio > 2) = 2;
     
-    figure(5)
+    figure('Position', figurePosition)
     colormap('hot');
     imagesc(errorUncertaintyRatio, "AlphaData", fullCrustMap);
+    axis image
     set(gca, 'color', [0 0 1])
     bar = colorbar;
     bar.Label.String = "Depth Error to Uncertainty Ratio";
