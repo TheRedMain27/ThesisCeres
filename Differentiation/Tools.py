@@ -11,7 +11,7 @@ import scipy.optimize
 G = 6.67430e-11
 R = 470e3  # [m], park 2016
 M = 62.62736e9 / G  # [kg], konopliv 2018
-I = 0.375 * M * R ** 2  #[kg*m2] mao and mckinnon, 2018
+I = 0.37 * M * R ** 2  #[kg*m2] mao and mckinnon, 2018
 
 iceDensity = 917  # [kg/m3]
 olivineDensity = 3370  # [kg/m3]

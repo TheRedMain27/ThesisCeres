@@ -1,10 +1,10 @@
 from Tools import *
 
-brineFraction = 0
-rockFraction = 0.8
+brineFraction = 0.15
+rockFraction = 0.15
 
 coreDensity = olivineDensity
-mantleDensity = 2367  # ((1 - brineFraction) * serpentiniteDensity + brineFraction * brineDensity)
+mantleDensity = ((1 - brineFraction) * serpentiniteDensity + brineFraction * brineDensity)
 crustDensity = (1 - rockFraction) * iceDensity + rockFraction * serpentiniteDensity
 def mantleRadiusDifference(coreRadius):
     mantleRadius1 = ((3 * M / (4 * np.pi) - crustDensity * R ** 3 -
@@ -78,13 +78,13 @@ print(coreRadius / 1e3, mantleRadius / 1e3)
 #             print("Iron-Magnesium Fraction: " + str(round(ironAtoms[0] / magnesiumAtoms[0], 3)))
 #             print("Silicon-Metals Fraction: " + str(round(siliconAtoms[0] / (ironAtoms[0] + magnesiumAtoms[0]), 3)))
 
-#
-# print("Oxygen : " + str(round(oxygenAtoms[0] / totalAtoms[0] * 100, 3)) + "%")
-# print("Silicon : " + str(round(siliconAtoms[0] / totalAtoms[0] * 100, 3)) + "%")
-# print("Iron : " + str(round(ironAtoms[0] / totalAtoms[0] * 100, 3)) + "%")
-# print("Magnesium : " + str(round(magnesiumAtoms[0] / totalAtoms[0] * 100, 3)) + "%")
-# # print("Hydrogen : " + str(round(hydrogenAtoms[0] / totalAtoms[0] * 100, 3)) + "%")
-# # print("Salt Atoms: " + str(round(saltAtoms[0] / totalAtoms[0] * 100, 3)) + "%")
-#
-# print("Iron-Magnesium Fraction: " + str(round(ironAtoms[0] / magnesiumAtoms[0], 3)))
-# print("Silicon-Metals Fraction: " + str(round(siliconAtoms[0] / (ironAtoms[0] + magnesiumAtoms[0]), 3)))
+
+print("Oxygen : " + str(round(oxygenAtoms[0] / totalAtoms[0] * 100, 3)) + "%")
+print("Silicon : " + str(round(siliconAtoms[0] / totalAtoms[0] * 100, 3)) + "%")
+print("Iron : " + str(round(ironAtoms[0] / totalAtoms[0] * 100, 3)) + "%")
+print("Magnesium : " + str(round(magnesiumAtoms[0] / totalAtoms[0] * 100, 3)) + "%")
+# print("Hydrogen : " + str(round(hydrogenAtoms[0] / totalAtoms[0] * 100, 3)) + "%")
+# print("Salt Atoms: " + str(round(saltAtoms[0] / totalAtoms[0] * 100, 3)) + "%")
+
+print("Iron-Magnesium Fraction: " + str(round(ironAtoms[0] / magnesiumAtoms[0], 3)))
+print("Silicon-Metals Fraction: " + str(round(siliconAtoms[0] / (ironAtoms[0] + magnesiumAtoms[0]), 3)))
