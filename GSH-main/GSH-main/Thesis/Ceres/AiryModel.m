@@ -14,7 +14,6 @@ gravityFilename = "..\..\..\..\Data\Ceres18C_KonoplivEtAl2018.txt";
 % getTopo(topographyFilename);
 
 topography = matfile("topography.mat").topography;
-% gravity = readGravity(gravityFilename, 3);
 
 G = 6.6743e-11;
 g0 = 0.284; % assuming homogeneous density
@@ -22,15 +21,24 @@ radius = 470e3; % (park, 2016)
 gravitationalParameter = 62.62736e9; % (konopliv, 2018)
 mass = gravitationalParameter / G;
 momentOfInertia = 0.375 * mass * radius ^ 2; % (mao and mckinnon, 2018)
+SHbounds =  [5 14];
+save("AiryModel/SHbounds.mat","SHbounds")
 
-mantleDensity = 2367; % (King, 2018)
-crustDensity = 910; % from optimization
-referenceDepth = 11.7e3; % from optimization
+[gravity, gravitySHCoefficients] = readGravity(gravityFilename, ...
+    SHbounds, gravitationalParameter, radius);
+
+mantleDensity = 2410; % from optimization
+crustDensity = 1310; % from optimization
+referenceDepth = 39e3; % from optimization
+save("AiryModel/referenceDepth.mat","referenceDepth")
+save("AiryModel/crustDensity.mat","crustDensity")
+save("AiryModel/mantleDensity.mat","mantleDensity")
 
 crustGravity = ...
     calculateLowerCrustGravity(radius, referenceDepth, crustDensity, mass);
 airyCrust = airyEqualPressures(topography, crustDensity, ...
     mantleDensity, referenceDepth, g0, crustGravity);
+save("AiryModel/airyCrust.mat","airyCrust")
 
 %% Create model (from GSH package)
 Model = struct();
@@ -61,11 +69,31 @@ Model.l3.bound = repmat(-radius, 180, 360);
 latLim =    [-89.5 89.5 1];
 lonLim =    [0.5 359.5 1];
 height =    0; % LAMO is 375km
-SHbounds =  [3 18];
 
-SH_coefficients = model_SH_analysis(Model);
+ModelSHCoefficients = segment_2layer_model(topography, ...
+    Model.l2.bound, -radius, crustDensity, ...
+    mantleDensity, 3e3, Model);
 data = model_SH_synthesis(lonLim, latLim, height, SHbounds, ...
-    SH_coefficients, Model);
+    ModelSHCoefficients, Model);
+
+gravityResidual = gravity - flip(data.vec.R, 1);
+save("AiryModel/gravityResidual.mat","gravityResidual")
+
+[n,modelDegreeVariance] = degreeVariance(ModelSHCoefficients);
+modelDegreeVariance(1:2) = [0, 0];
+[n,gravityDegreeVariance] = degreeVariance(gravitySHCoefficients);
+gravityDegreeVariance(1:2) = [0, 0];
+
+normalizedDegreeVariance = modelDegreeVariance ./ gravityDegreeVariance;
+
+figure(1)
+plot(normalizedDegreeVariance((SHbounds(1)+1):(SHbounds(2)+1)))
+yline(1)
+% set(gca,"Yscale", "log")
+xticks(1:(SHbounds(2) - SHbounds(1)));
+xticklabels(string(SHbounds(1):SHbounds(2)));
+xlabel("Spherical Harmonics Degree [-]")
+ylabel("Normalized Degree Variance [-]")
 
 latitudeTicks = 0:30:180;
 latitudeTickLabels = string(flip(-90:30:90));
@@ -87,8 +115,8 @@ xticks(longitudeTicks);
 xticklabels(longitudeTickLabels);
 yticks(latitudeTicks);
 yticklabels(latitudeTickLabels);
-savefig("Images/AiryCrustThickness")
-saveas(gcf, "Images/PNG/AiryCrustThickness.png")
+savefig("AiryModel/AiryCrustThickness")
+saveas(gcf, "AiryModel/PNG/AiryCrustThickness.png")
 
 figure('Position', figurePosition)
 colormap("turbo")
@@ -101,5 +129,18 @@ xticks(longitudeTicks);
 xticklabels(longitudeTickLabels);
 yticks(latitudeTicks);
 yticklabels(latitudeTickLabels);
-savefig("Images/AiryGravity")
-saveas(gcf, "Images/PNG/AiryGravity.png")
+savefig("AiryModel/AiryGravity")
+saveas(gcf, "AiryModel/PNG/AiryGravity.png")
+
+figure('Position', figurePosition)
+colormap("turbo")
+imagesc(gravityResidual * 1e5)
+axis image
+bar = colorbar;
+bar.Label.String = "Gravity Residual [mGal]";
+xticks(longitudeTicks);
+xticklabels(longitudeTickLabels);
+yticks(latitudeTicks);
+yticklabels(latitudeTickLabels);
+savefig("AiryModel/AiryResidual")
+saveas(gcf, "AiryModel/AiryResidual.png")

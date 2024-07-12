@@ -28,17 +28,13 @@ SHbounds =  matfile("PrattModel/SHbounds.mat").SHbounds;
 
 compensationDepth = ...
     matfile("PrattModel/compensationDepth.mat").compensationDepth;
-referenceDensity = ...
-    matfile("PrattModel/referenceDensity.mat").referenceDensity;
-
 prattCrust = matfile("PrattModel/prattCrust.mat").prattCrust;
 gravityResidual = matfile("PrattModel/gravityResidual").gravityResidual;
 
-mantleDensity = 2520;
-
-dr = -gravityResidual .* compensationDepth ^ 2 * 180 ^ 2 ./ ...
-    (G * (mantleDensity - prattCrust) * pi ^ 2 * (radius - compensationDepth) ^ 4);
-crustThickness = dr + compensationDepth;
+r = (compensationDepth + topography) / 2;
+drho = (180 ^ 2 / (2 * (pi ^ 2) * G)) * (r ./ (radius - r) .^ 2) .* ...
+    gravityResidual;
+prattCrust = prattCrust + drho;
 
 latitudeTicks = 0:30:180;
 latitudeTickLabels = string(flip(-90:30:90));
@@ -52,10 +48,10 @@ figurePosition(3) = 2 * figurePosition(4);
 
 figure('Position', figurePosition)
 colormap("turbo")
-imagesc(crustThickness / 1e3)
+imagesc(prattCrust)
 axis image
 bar = colorbar;
-bar.Label.String = "Crust Thickness [km]";
+bar.Label.String = "Crust Density [kg/m^3]";
 xticks(longitudeTicks);
 xticklabels(longitudeTickLabels);
 yticks(latitudeTicks);

@@ -15,11 +15,24 @@ gravityFilename = "..\..\..\..\Data\Ceres18C_KonoplivEtAl2018.txt";
 
 radius = 470e3; % (park, 2016)
 gravitationalParameter = 62.62736e9; % (konopliv, 2018)
-SHbounds = [1 10];
+SHbounds = [1 18];
 
 topography = matfile("topography.mat").topography;
-gravity = readGravity(gravityFilename, SHbounds, gravitationalParameter,...
-    radius);
+[gravity, gravitySHCoefficients] = readGravity(gravityFilename, ...
+    SHbounds, gravitationalParameter, radius);
+
+[n,gravityDegreeVariance] = degreeVariance(gravitySHCoefficients);
+gravityDegreeVariance(1:2) = [0, 0];
+
+figure(1)
+plot(n(3:end), gravityDegreeVariance(3:end))
+set(gca,"Yscale", "log")
+xticks(1:(SHbounds(2) - SHbounds(1)));
+xticklabels(string(SHbounds(1):SHbounds(2)));
+xlabel("Spherical Harmonics Degree [-]")
+ylabel("Degree Variance [-]")
+savefig("Images/GravityDegreeVariance")
+saveas(gcf, "Images/PNG/GravityDegreeVariance.png")
 
 G = 6.6743e-11;
 

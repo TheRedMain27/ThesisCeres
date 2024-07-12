@@ -31,8 +31,8 @@ SHbounds = [5 14];
 baseCompensationDepth = 70e3;
 baseReferenceDensity = 1570;
 
-compensationDepths = 40e3:5e3:100e3;
-referenceDensities = [1000:100:2000, 1570];
+compensationDepths = 40e3:10e3:200e3;
+referenceDensities = [1000:100:3000, 1570];
 
 figure(1)
 yline(1)
@@ -40,6 +40,7 @@ xticks(1:(SHbounds(2) - SHbounds(1)));
 xticklabels(string(SHbounds(1):SHbounds(2)));
 xlabel("Spherical Harmonics Degree [-]")
 ylabel("Normalized Degree Variance [-]")
+title("Compensation Depth")
 hold on
 
 for compensationDepth = compensationDepths
@@ -89,6 +90,8 @@ for compensationDepth = compensationDepths
     plot(normalizedDegreeVariance((SHbounds(1)+1):(SHbounds(2)+1)), "Color", color)
 end
 hold off
+savefig("Images/CompensationDepthSensitivity")
+saveas(gcf, "Images/PNG/CompensationDepthSensitivity.png")
 
 figure(2)
 yline(1)
@@ -96,6 +99,7 @@ xticks(1:(SHbounds(2) - SHbounds(1)));
 xticklabels(string(SHbounds(1):SHbounds(2)));
 xlabel("Spherical Harmonics Degree [-]")
 ylabel("Normalized Degree Variance [-]")
+title("Reference Density")
 hold on
 
 for referenceDensity = referenceDensities
@@ -145,3 +149,5 @@ for referenceDensity = referenceDensities
     plot(normalizedDegreeVariance((SHbounds(1)+1):(SHbounds(2)+1)), "Color", color)
 end
 hold off
+savefig("Images/ReferenceDepthSensitivity")
+saveas(gcf, "Images/PNG/ReferenceDensitySensitivity.png")

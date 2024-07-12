@@ -22,7 +22,7 @@ gravitationalParameter = 62.62736e9; % (konopliv, 2018)
 mass = gravitationalParameter / G;
 momentOfInertia = 0.375 * mass * radius ^ 2; % (mao and mckinnon, 2018)
 
-directoryName = "PrattDegreeVarianceTry";
+directoryName = "PrattDegreeVarianceLowLevel";
 if ~exist(directoryName, "dir")
     mkdir(directoryName)
 end
@@ -34,7 +34,7 @@ save(directoryName + "/SHbounds.mat","SHbounds")
 
 [n,gravityDegreeVariance] = degreeVariance(gravitySHCoefficients);
 
-runOptimization = true;
+runOptimization = false;
 runVisualization = true;
 runFinalVisualization = false;
 

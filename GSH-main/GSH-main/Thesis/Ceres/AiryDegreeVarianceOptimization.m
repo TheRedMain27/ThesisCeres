@@ -22,7 +22,7 @@ gravitationalParameter = 62.62736e9; % (konopliv, 2018)
 mass = gravitationalParameter / G;
 momentOfInertia = 0.375 * mass * radius ^ 2; % (mao and mckinnon, 2018)
 
-directoryName = "AiryDegreeVarianceTry";
+directoryName = "AiryDegreeVarianceTry2";
 if ~exist(directoryName, "dir")
     mkdir(directoryName)
 end
@@ -37,7 +37,7 @@ save(directoryName + "/SHbounds.mat","SHbounds")
 mantleDensity = 2367; % (King, 2018)
 save(directoryName + "/mantleDensity.mat","mantleDensity")
 
-runOptimization = true;
+runOptimization = false;
 runVisualization = true;
 runFinalVisualization = false;
 
@@ -93,7 +93,7 @@ if runOptimization
         
                 ModelSHCoefficients = segment_2layer_model(topography, ...
                     Model.l2.bound, -radius, crustDensity, ...
-                    crustDensity, referenceDepth / 3, Model);
+                    mantleDensity, 3e3, Model);
                 [n,modelDegreeVariance] = ...
                     degreeVariance(ModelSHCoefficients);
                 modelDegreeVariance(1:2) = [0, 0];
