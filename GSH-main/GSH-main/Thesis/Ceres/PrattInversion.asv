@@ -21,19 +21,16 @@ radius = 470e3; % (park, 2016)
 gravitationalParameter = 62.62736e9; % (konopliv, 2018)
 mass = gravitationalParameter / G;
 momentOfInertia = 0.375 * mass * radius ^ 2; % (mao and mckinnon, 2018)
-SHbounds =  [1 18];
-save("InvertedPrattModel/SHbounds.mat","SHbounds")
+SHbounds =  matfile("PrattModel/SHbounds.mat").SHbounds;
 
 [gravity, gravitySHCoefficients] = readGravity(gravityFilename, ...
     SHbounds, gravitationalParameter, radius);
 
 compensationDepth = 70e3;
 referenceDensity = 1570;
-save("InvertedPrattModel/compensationDepth.mat","compensationDepth")
-save("InvertedPrattModel/referenceDensity.mat","referenceDensity")
 prattCrust = pratt(topography, referenceDensity, compensationDepth);
 
-updateFactor = 0.35;
+updateFactor = 0.2;
 
 Model = struct();
 Model.number_of_layers = 1;
@@ -66,8 +63,6 @@ for i = 1:15
 
     prattCrust = prattCrust + gravityResidual .* updateFactor;
 end
-save("InvertedPrattModel/prattCrust.mat","prattCrust")
-save("InvertedPrattModel/gravityResidual.mat","gravityResidual")
 
 latitudeTicks = 0:30:180;
 latitudeTickLabels = string(flip(-90:30:90));
@@ -89,8 +84,6 @@ xticks(longitudeTicks);
 xticklabels(longitudeTickLabels);
 yticks(latitudeTicks);
 yticklabels(latitudeTickLabels);
-savefig("InvertedPrattModel/PrattCrustDensity")
-saveas(gcf, "InvertedPrattModel/PrattCrustDensity.png")
 
 figure('Position', figurePosition)
 colormap("turbo")
@@ -102,5 +95,3 @@ xticks(longitudeTicks);
 xticklabels(longitudeTickLabels);
 yticks(latitudeTicks);
 yticklabels(latitudeTickLabels);
-savefig("InvertedPrattModel/PrattResidual")
-saveas(gcf, "InvertedPrattModel/PrattResidual.png")
