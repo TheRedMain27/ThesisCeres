@@ -81,6 +81,8 @@ ylabel("Number of Faculae [-]")
 hold on
 plot(x, y1, "LineWidth",2,"Color","red")
 plot(x, y2, "LineWidth",2,"Color","green")
+legend("Cryovolcanic histogram", "Cryovolcanic Guassian curve", ...
+    "Full crust Gaussian curve", "Location","northwest")
 hold off
 savefig("Images/PrattFaculaeHistogram")
 saveas(gcf, "Images/PNG/PrattFaculaeHistogram.png")
@@ -162,6 +164,8 @@ ylabel("Number of Faculae [-]")
 hold on
 plot(x, y1, "LineWidth",2,"Color","red")
 plot(x, y2, "LineWidth",2,"Color","green")
+legend("Cryovolcanic histogram", "Cryovolcanic Guassian curve", ...
+    "Full crust Gaussian curve")
 hold off
 savefig("Images/AiryFaculaeHistogram")
 saveas(gcf, "Images/PNG/AiryFaculaeHistogram.png")
