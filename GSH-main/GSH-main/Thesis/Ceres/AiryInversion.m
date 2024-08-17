@@ -21,23 +21,61 @@ radius = 470e3; % (park, 2016)
 gravitationalParameter = 62.62736e9; % (konopliv, 2018)
 mass = gravitationalParameter / G;
 momentOfInertia = 0.375 * mass * radius ^ 2; % (mao and mckinnon, 2018)
-SHbounds =  matfile("PrattModel/SHbounds.mat").SHbounds;
+SHbounds =  [1 18];
+save("InvertedAiryModel/SHbounds.mat","SHbounds")
 
 [gravity, gravitySHCoefficients] = readGravity(gravityFilename, ...
     SHbounds, gravitationalParameter, radius);
 
-referenceDepth = ...
-    matfile("AiryModel/referenceDepth.mat").referenceDepth;
-crustDensity = ...
-    matfile("AiryModel/crustDensity.mat").crustDensity;
-mantleDensity = ...
-    matfile("AiryModel/mantleDensity.mat").mantleDensity;
+mantleDensity = 2410; % from optimization
+crustDensity = 1310; % from optimization
+referenceDepth = 39e3; % from optimization
+save("InvertedAiryModel/referenceDepth.mat","referenceDepth")
+save("InvertedAiryModel/crustDensity.mat","crustDensity")
+save("InvertedAiryModel/mantleDensity.mat","mantleDensity")
 
-airyCrust = matfile("AiryModel/airyCrust.mat").airyCrust;
-gravityResidual = matfile("AiryModel/gravityResidual").gravityResidual;
+crustGravity = ...
+    calculateLowerCrustGravity(radius, referenceDepth, crustDensity, mass);
+airyCrust = airyEqualPressures(topography, crustDensity, ...
+    mantleDensity, referenceDepth, g0, crustGravity);
 
-drho = (90 / (pi * G)) * gravityResidual ./ ((airyCrust - topography) / 2);
-crustDensity = crustDensity + drho;
+updateFactor = 0.4;
+
+Model = struct();
+Model.number_of_layers = 2;
+
+% Additional variables
+Model.GM = gravitationalParameter;
+Model.Re_analyse = radius;
+Model.Re = radius;
+Model.geoid = 'none';
+Model.nmax = 18;
+Model.correct_depth = 0;
+
+Model.l1.bound = topography;
+Model.l2.bound = topography - airyCrust;
+Model.l2.dens = mantleDensity;
+Model.l3.bound = repmat(-radius, 180, 360);
+
+latLim =    [-89.5 89.5 1];
+lonLim =    [0.5 359.5 1];
+height =    0; % LAMO is 375km
+
+for i = 1:15
+    disp(i)
+    Model.l1.dens  = crustDensity;
+
+    ModelSHCoefficients = segment_2layer_model(topography, ...
+        Model.l2.bound, -radius, crustDensity, ...
+        mantleDensity, 3e3, Model);
+    data = model_SH_synthesis(lonLim, latLim, height, SHbounds, ...
+        ModelSHCoefficients, Model);
+    gravityResidual = (gravity - flip(data.vec.R, 1)) * 1e5;
+
+    crustDensity = crustDensity + gravityResidual .* updateFactor;
+end
+save("InvertedAiryModel/crustDensity.mat","crustDensity")
+save("InvertedAiryModel/gravityResidual.mat","gravityResidual")
 
 latitudeTicks = 0:30:180;
 latitudeTickLabels = string(flip(-90:30:90));
@@ -54,8 +92,23 @@ colormap("turbo")
 imagesc(crustDensity)
 axis image
 bar = colorbar;
-bar.Label.String = "Crust Density [kg/m3]";
+bar.Label.String = "Crust Density [kg/m^3]";
 xticks(longitudeTicks);
 xticklabels(longitudeTickLabels);
 yticks(latitudeTicks);
 yticklabels(latitudeTickLabels);
+savefig("InvertedAiryModel/CrustDensity")
+saveas(gcf, "InvertedAiryModel/CrustDensity.png")
+
+figure('Position', figurePosition)
+colormap("turbo")
+imagesc(gravityResidual)
+axis image
+bar = colorbar;
+bar.Label.String = "Gravity Residual [mGal]";
+xticks(longitudeTicks);
+xticklabels(longitudeTickLabels);
+yticks(latitudeTicks);
+yticklabels(latitudeTickLabels);
+savefig("InvertedAiryModel/Residual")
+saveas(gcf, "InvertedAiryModel/Residual.png")
