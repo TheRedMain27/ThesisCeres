@@ -81,8 +81,8 @@ ylabel("Number of Faculae [-]")
 hold on
 plot(x, y1, "LineWidth",2,"Color","red")
 plot(x, y2, "LineWidth",2,"Color","green")
-legend("Cryovolcanic histogram", "Cryovolcanic Guassian curve", ...
-    "Full crust Gaussian curve", "Location","northwest")
+legend("Cryovolcanic histogram", "Cryovolcanic curve", ...
+    "Full crust curve", "Location","northwest")
 hold off
 savefig("Images/PrattFaculaeHistogram")
 saveas(gcf, "Images/PNG/PrattFaculaeHistogram.png")
@@ -164,8 +164,91 @@ ylabel("Number of Faculae [-]")
 hold on
 plot(x, y1, "LineWidth",2,"Color","red")
 plot(x, y2, "LineWidth",2,"Color","green")
-legend("Cryovolcanic histogram", "Cryovolcanic Guassian curve", ...
-    "Full crust Gaussian curve")
+legend("Cryovolcanic histogram", "Cryovolcanic curve", ...
+    "Full crust curve")
 hold off
 savefig("Images/AiryFaculaeHistogram")
 saveas(gcf, "Images/PNG/AiryFaculaeHistogram.png")
+
+%%%%%%%%%%%%%%%%%%%%%%%%%% Airy Thickness %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+crustThicknesses = matfile("InvertedAiryModel/airyCrust.mat").airyCrust;
+faculae = readtable("..\..\..\..\Data\1-s2.0-S0019103517303627-mmc2.csv");
+faculae = table2array(faculae(:,1:2));
+faculae(faculae > 180) = faculae(faculae > 180);
+faculae(:,2) = -faculae(:,2) + 90;
+
+latitudeTicks = 0:30:180;
+latitudeTickLabels = string(flip(-90:30:90));
+longitudeTicks = 0:60:360;
+longitudeTickLabels = string(-180:60:180);
+
+figurePosition = get(groot, 'DefaultFigurePosition');
+figurePosition(1) = figurePosition(1) - (2 * figurePosition(4) - ...
+    figurePosition(3)) / 2;
+figurePosition(3) = 2 * figurePosition(4);
+
+figure('Position', figurePosition)
+colormap("turbo")
+imagesc(crustThicknesses / 1e3)
+axis image
+cbar = colorbar;
+cbar.Label.String = "Crust Thickness [km]";
+xticks(longitudeTicks);
+xticklabels(longitudeTickLabels);
+yticks(latitudeTicks);
+yticklabels(latitudeTickLabels);
+hold on
+scatter(faculae(:,1), faculae(:,2), "black", "filled")
+yline([30, 150], "LineStyle","--","LineWidth",2)
+hold off
+savefig("Images/AiryThicknessFaculaeMap")
+saveas(gcf, "Images/PNG/AiryThicknessFaculaeMap.png")
+
+sizeFaculae = size(faculae);
+
+faculaeThicknesses = zeros(sizeFaculae(1),1);
+
+for i = 1:sizeFaculae(1)
+    faculaeThicknesses(i,1) = crustThicknesses(round(faculae(i,2)), round(faculae(i,1)));
+end
+
+disp(mean(faculaeThicknesses))
+disp(max(faculaeThicknesses))
+disp(min(faculaeThicknesses))
+
+bucketEdges = 28e3:1e3:49e3;
+sizeBucketEdges = size(bucketEdges);
+histogram = zeros(sizeBucketEdges(2) - 1,1);
+
+for i = 1:sizeBucketEdges(2) - 1
+    sizeSelection = ...
+        size(faculaeThicknesses((faculaeThicknesses > bucketEdges(i)) & ...
+        (faculaeThicknesses < bucketEdges(i + 1))));
+    histogram(i) = sizeSelection(1);
+end
+
+x = 0:21;
+mu = mean(faculaeThicknesses);
+sigma = std(faculaeThicknesses);
+y1 = 1e3 * sizeFaculae(1) * exp(- 0.5 * ((bucketEdges - mu) / sigma) .^ 2) / ...
+    (sigma * sqrt(2 * pi));
+
+mu = mean(crustThicknesses, "all");
+sigma = std(crustThicknesses, 0, "all");
+y2 = 1e3 * sizeFaculae(1) * exp(- 0.5 * ((bucketEdges - mu) / sigma) .^ 2) / ...
+    (sigma * sqrt(2 * pi));
+
+figure()
+bar(histogram)
+xticks(0.5:5:21.5);
+xticklabels(string(28:1:49));
+xlabel("Crust Thickness [km]")
+ylabel("Number of Faculae [-]")
+hold on
+plot(x, y1, "LineWidth",2,"Color","red")
+plot(x, y2, "LineWidth",2,"Color","green")
+legend("Cryovolcanic histogram", "Cryovolcanic curve", ...
+    "Full crust curve")
+hold off
+savefig("Images/AiryThicknessFaculaeHistogram")
+saveas(gcf, "Images/PNG/AiryThicknessFaculaeHistogram.png")

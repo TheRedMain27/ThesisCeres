@@ -38,6 +38,7 @@ crustGravity = ...
     calculateLowerCrustGravity(radius, referenceDepth, crustDensity, mass);
 airyCrust = airyEqualPressures(topography, crustDensity, ...
     mantleDensity, referenceDepth, g0, crustGravity);
+save("InvertedAiryModel/airyCrust.mat","airyCrust")
 
 updateFactor = 0.4;
 
